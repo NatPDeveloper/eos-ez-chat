@@ -1,25 +1,20 @@
+### EOS EZ Chat ###
 
-# Socket.IO Chat
+Project goal: build an eosio authenticated chat room
 
-A simple chat demo for socket.io
+Technologies:
 
-## How to use
+1. Socket IO's chat example
+2. EOSIO Smart Contract on Jungle
+3. Dfuse's Websocket for tracking transaction status and getting data
+4. NodeJS
 
-```
-$ cd socket.io
-$ npm install
-$ cd examples/chat
-$ npm install
-$ npm start
-```
+Steps:
 
-And point your browser to `http://localhost:3000`. Optionally, specify
-a port by supplying the `PORT` env variable.
-
-## Features
-
-- Multiple users can join a chat room by each entering a unique username
-on website load.
-- Users can type chat messages to the chat room.
-- A notification is sent to all users when a user joins or leaves
-the chatroom.
+1. Connect to dfuse's websocket - **DONE**
+2. Create chat smart contract - **DONE**
+3. Emit message to chat room upon web socket detecting new transaction - **DONE**
+4. Integrate Scatter to send transaction
+5. Handle logging in with Scatter
+6. Style
+7. Add developer comments
