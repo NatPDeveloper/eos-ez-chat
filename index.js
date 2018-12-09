@@ -31,8 +31,6 @@ const client = new EoswsClient(
   )
 )
 
-
-
   client
     .connect()
     .then(() => {
@@ -62,20 +60,18 @@ var numUsers = 0;
 
 io.on('connection', (socket) => {
   var addedUser = false;
+  console.log("reconnect");
 
   client
   .connect()
   .then(() => {
     client
       .getActionTraces({ account: "eosezchatnat", action_name: "sendmsg" })
-      // .getTransactionLifecycle(
-      //   "166a6e925fbf41bb0debeb2a8a1c3bc8e5cd03acd157565f8d7b1af12086f584"
-      // )
       .onMessage((message) => {
         if (message.type === InboundMessageType.ACTION_TRACE) {
           const { user, msg } = message.data.trace.act.data
-          console.log(user, msg)
-          socket.broadcast.emit('new message', {
+          console.log("this", user, msg)
+          socket.volatile.emit('new message', {
             username: user,
             message: msg
           });
@@ -86,10 +82,10 @@ io.on('connection', (socket) => {
           console.log(message.data.lifecycle.execution_irreversible);
         }
       })
-  })
-  .catch((error) => {
-    console.log("Unable to connect to dfuse endpoint.", error)
-  })
+    })
+    .catch((error) => {
+      console.log("Unable to connect to dfuse endpoint.", error)
+  }) 
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {

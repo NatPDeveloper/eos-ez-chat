@@ -7,6 +7,10 @@ $(function() {
     '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
   ];
 
+  // Scatter setup
+
+  ScatterJS.plugins( new ScatterEOS() );
+
   const network = {
     blockchain:'eos',
     protocol:'http',
@@ -20,42 +24,22 @@ $(function() {
     if(!connected) return false;
 
     const scatter = ScatterJS.scatter;
-
-    // Now we need to get an identity from the user.
-    // We're also going to require an account that is connected to the network we're using.
+    console.log(scatter);
     const requiredFields = { accounts:[network] };
 
     scatter.getIdentity(requiredFields).then(() => {
-
-        // Always use the accounts you got back from Scatter. Never hardcode them even if you are prompting
-        // the user for their account name beforehand. They could still give you a different account.
         const account = scatter.identity.accounts.find(x => x.blockchain === 'eos');
-
-        // You can pass in any additional options you want into the eosjs reference.
         const eosOptions = { expireInSeconds:60 };
-
-        // Get a proxy reference to eosjs which you can use to sign transactions with a user's Scatter.
-        var eos = scatter.eos( network, Eos, eosOptions )
-
-        // ----------------------------
-        // Now that we have an identity,
-        // an EOSIO account, and a reference
-        // to an eosjs object we can send a transaction.
-        // ----------------------------
-
-
-        // Never assume the account's permission/authority. Always take it from the returned account.
+        const eos = scatter.eos( network, Eos, eosOptions )
         const transactionOptions = { authorization:[`${account.name}@${account.authority}`] };
 
-        eos.sendmsg(account.name, 'eosezchatnat', transactionOptions).then(trx => {
-            // That's it!
-            console.log(`Transaction ID: ${trx.transaction_id}`);
-        }).catch(error => {
-            console.error(error);
-        });
+        eos.contract('eosezchatnat').then(contract => {  // contract account needs to change when going to jungle..
+            contract.sendmsg(account.name, 'eosezchatnat', transactionOptions)
+        }).catch(e => {
+            console.log("error", e);
+        })
 
     }).catch(error => {
-        // The user rejected this request, or doesn't have the appropriate requirements.
         console.error(error);
     });
 
