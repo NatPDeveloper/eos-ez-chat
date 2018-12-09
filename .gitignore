@@ -1,0 +1,7 @@
+# dependencies
+/node_modules
+.env
+jungle.txt
+package-lock.json
+*.wast
+*.wasm
