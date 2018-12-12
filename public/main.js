@@ -363,9 +363,14 @@ $(function() {
     socket.on('transaction_status', (data) => {
       console.log(data.execution_irreversible);
       console.log(data);
-      if(data.execution_irreversible){
-        document.querySelector('.' + data.msg_id).textContent = "irreversible ";
-        document.querySelector('.' + data.msg_id).style.color = "green";
+      try {
+        if(data.execution_irreversible){
+          document.querySelector('.' + data.msg_id).textContent = "irreversible ";
+          document.querySelector('.' + data.msg_id).style.color = "green";
+        }
+      }
+      catch(error){
+        console.log("chat message not local");
       }
     });
 
@@ -374,8 +379,13 @@ $(function() {
       console.log(data.msg_id);
       console.log(data.message);
       console.log('.messageBody ' + data.msg_id)
-      document.querySelector('.' + data.msg_id).textContent = "confirmed ";
-      document.querySelector('.' + data.msg_id).style.color = "#e5d822";
+      try {
+        document.querySelector('.' + data.msg_id).textContent = "confirmed ";
+        document.querySelector('.' + data.msg_id).style.color = "#e5d822";
+      }
+      catch(error){
+        console.log("chat message not local");
+      }
     });
 
     window.ScatterJS = null;
