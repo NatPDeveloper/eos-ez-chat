@@ -26,3 +26,6 @@ Using the [Scatter Wallet](https://get-scatter.com/) and a [Jungle 2.0 account](
 6. `API_TOKEN=YOUR_API_TOKEN`
 7. node index.js
 
+### Issues: ###
+1. Way of using websocket within a websocket needs some further exploration.
+2. Client side needs to render status change of messages or no status.
