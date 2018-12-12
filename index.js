@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
       .onMessage((message) => {
         if (message.type === InboundMessageType.ACTION_TRACE) {
           const { user, msg_id, msg } = message.data.trace.act.data
-          console.log(message.data.trace.trx_id)
+          console.log("emit new msg")
           const runId = () => {
             client
             .connect()

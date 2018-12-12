@@ -138,6 +138,10 @@ $(function() {
 
     // Adds the visual chat message to the message list
     const addChatMessage = (data, options) => {
+      // console.log(data.chat_id);
+      console.log(data.chat_id);
+      let id = chat_id;
+      var $statusDiv
       // Don't fade the message in if there is an 'X was typing'
       var $typingMessages = getTypingMessages(data);
       options = options || {};
@@ -149,22 +153,30 @@ $(function() {
       var $usernameDiv = $('<span class="username"/>')
         .text(data.username)
         .css('color', getUsernameColor(data.username));
-        
-      var $statusDiv = $('<span class="username"/>')
+
+      if(data.chat_id){
+        $statusDiv = $('<span class="'+ data.chat_id + '"/>')
         .text("pending ")
         .css('color', 'red');
-      $statusDiv.attr("id",data.chat_id);
+      }
 
       var $messageBodyDiv = $('<span class="messageBody">')
         .text(data.message);
 
       var typingClass = data.typing ? 'typing' : '';
-      var $messageDiv = $('<li class="message"/>')
+      if(data.chat_id){
+        var $messageDiv = $('<li class="message"/>')
         .data('username', data.username)
         .addClass(typingClass)
         .append($usernameDiv, $statusDiv, $messageBodyDiv);
-
-      addMessageElement($messageDiv, options);
+      } else {
+        var $messageDiv = $('<li class="message"/>')
+        .data('username', data.username)
+        .addClass(typingClass)
+        .append($usernameDiv, $messageBodyDiv);
+      }
+      
+      addMessageElement($messageDiv, options, id);
     }
 
     // Adds the visual chat typing message
@@ -186,7 +198,8 @@ $(function() {
     // options.fade - If the element should fade-in (default = true)
     // options.prepend - If the element should prepend
     //   all other messages (default = false)
-    const addMessageElement = (el, options) => {
+    const addMessageElement = (el, options, chat_id) => {
+
       var $el = $(el);
 
       // Setup default options
@@ -351,8 +364,8 @@ $(function() {
       console.log(data.execution_irreversible);
       console.log(data);
       if(data.execution_irreversible){
-        document.querySelector('#' + data.msg_id).textContent = "irreversible";
-        document.querySelector('#' + data.msg_id).style.color = "green";
+        document.querySelector('.' + data.msg_id).textContent = "irreversible ";
+        document.querySelector('.' + data.msg_id).style.color = "green";
       }
     });
 
@@ -360,8 +373,9 @@ $(function() {
       console.log(data.username);
       console.log(data.msg_id);
       console.log(data.message);
-      document.querySelector('#' + data.msg_id).textContent = "confirmed";
-      document.querySelector('#' + data.msg_id).style.color = "#e5d822";
+      console.log('.messageBody ' + data.msg_id)
+      document.querySelector('.' + data.msg_id).textContent = "confirmed ";
+      document.querySelector('.' + data.msg_id).style.color = "#e5d822";
     });
 
     window.ScatterJS = null;
