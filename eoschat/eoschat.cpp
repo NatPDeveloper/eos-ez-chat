@@ -8,7 +8,7 @@ class eoschat : public contract {
       using contract::contract;
 
       [[eosio::action]]
-      void sendmsg( name user, std::string msg ) {
+      void sendmsg( name user, std::string msg_id, std::string msg ) {
          require_auth(user);
       }
 };

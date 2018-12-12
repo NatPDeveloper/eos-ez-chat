@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EOS EZ Chat</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" type="image/x-icon" src="./favicon.ico"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+    <nav id="navbar" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <img style="padding: 5px 10px 5px 5px;" class="navbar-brand" src="./EOS-EZ-Chat.png" alt="EOS EZ Chat">
+            <button style="visibility: hidden" id="signoutButton" type="button" class="btn btn-default navbar-btn navbar-right">Sign Out</button>
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home <span class="sr-only">(current)</span></a></li>
+                <li class="active"><a href="/about">About</a></li>
+              </ul>
+        </div>
+    </nav>
+    <div id="jumbotron" class="container">
+      <div class="jumbotron">
+        <h1>About EOS EZ Chat!</h1>
+        <p style="font-size: 1.2em">EOS EZ Chat is a simple Socket IO enabled chat room.  To use, simply click the login button to <a href="https://get-scatter.com/">link your Scatter account</a>
+          then type a message.  You will see your message update as your transaction moves from (<strong>pending</strong>, <strong>confirmed</strong>, <strong>irreversible</strong>).
+            This is an easy way of seeing how long it takes for a transaction to become irreversible.  This app is currently hosted
+             on the <a href="https://monitor.jungletestnet.io/#home">Jungle Testnet</a>, so if you'd like to test it, you will need to <a href="https://monitor.jungletestnet.io/#account">create an account.</a>
+        </p>
+        <p><a class="btn btn-primary btn-lg" href="https://github.com/NatPDeveloper/eos-ez-chat" role="button">Check the source</a></p>
+      </div>
+    </div>
+  <script src="/main.js"></script>
+</body>
+</html>

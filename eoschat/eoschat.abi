@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Sun Dec  9 14:44:44 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Dec 11 20:38:30 2018",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -9,6 +9,10 @@
                 {
                     "name": "user",
                     "type": "name"
+                },
+                {
+                    "name": "msg_id",
+                    "type": "string"
                 },
                 {
                     "name": "msg",

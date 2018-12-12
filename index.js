@@ -10,7 +10,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var server = require('http').createServer(app);
-var io = require('../..')(server);
+var io = require('./lib')(server);
 var port = process.env.PORT || 3000;
 
 server.listen(port, () => {
@@ -19,6 +19,14 @@ server.listen(port, () => {
 
 // Routing
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.set('views', __dirname + '/views');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');
+
+app.get("/about", (req, res, next) => {
+  res.render("about.html")
+})
 
 // dfuse websocket
 
@@ -31,61 +39,59 @@ const client = new EoswsClient(
   )
 )
 
-// client
-// .connect()
-// .then(() => {
-//   client
-//     .getActionTraces({ account: "eosezchatnat", action_name: "sendmsg" })
-//     .onMessage((message) => {
-//       if (message.type === InboundMessageType.ACTION_TRACE) {
-//         const { user, msg } = message.data.trace.act.data
-//         // console.log("this", user, msg)
-//         socket.volatile.emit('new message', {
-//           username: user,
-//           message: msg
-//         });
-        
-//       }
-//       if (message.type === InboundMessageType.TRANSACTION_LIFECYCLE){
-//         // console.log(message.data.lifecycle.transaction_status);
-//         // console.log(message.data.lifecycle.execution_irreversible);
-//       }
-//     })
-//   })
-//   .catch((error) => {
-//     console.log("Unable to connect to dfuse endpoint.", error)
-// }) 
-
-//   client
-//     .connect()
-//     .then(() => {
-//       client
-//         // .getActionTraces({ account: "eosezchatnat", action_name: "sendmsg" })
-//         .getTransactionLifecycle(
-//           "166a6e925fbf41bb0debeb2a8a1c3bc8e5cd03acd157565f8d7b1af12086f584"
-//         )
-//         .onMessage((message) => {
-//           if (message.type === InboundMessageType.ACTION_TRACE) {
-//             const { user, msg } = message.data.trace.act.data
-//             console.log("getTransactionLifecycle")
-//           }
-//           if (message.type === InboundMessageType.TRANSACTION_LIFECYCLE){
-//             console.log(message.data.lifecycle.transaction_status);
-//             console.log(message.data.lifecycle.execution_irreversible);
-//           }
-//         })
-//     })
-//     .catch((error) => {
-//       console.log("Unable to connect to dfuse endpoint.", error)
-//   })
-
 // Chatroom
 
 var numUsers = 0;
 
 io.on('connection', (socket) => {
   var addedUser = false;
-  // console.log("reconnect");
+
+  client
+  .connect()
+  .then(() => {
+    client
+      .getActionTraces({ account: "eosezchatnat", action_name: "sendmsg" })
+      .onMessage((message) => {
+        if (message.type === InboundMessageType.ACTION_TRACE) {
+          const { user, msg_id, msg } = message.data.trace.act.data
+          console.log(message.data.trace.trx_id)
+          const runId = () => {
+            client
+            .connect()
+            .then(() => {
+              client
+                // .getActionTraces({ account: "eosezchatnat", action_name: "sendmsg" })
+                .getTransactionLifecycle(
+                  message.data.trace.trx_id
+                )
+                .onMessage((message) => {
+                  if (message.type === InboundMessageType.TRANSACTION_LIFECYCLE){
+                    console.log(message.data.lifecycle.execution_irreversible);
+                    console.log(message.data.lifecycle.execution_trace.action_traces[0].act.data);
+                    socket.volatile.emit('transaction_status', {
+                      execution_irreversible: message.data.lifecycle.execution_irreversible,
+                      msg_id: message.data.lifecycle.execution_trace.action_traces[0].act.data.msg_id
+                    });
+                  }
+                })
+            })
+            .catch((error) => {
+              console.log("Unable to connect to dfuse endpoint.", error)
+          })
+          }
+          
+          runId();
+          socket.volatile.emit('new transaction', {
+            username: user,
+            msg_id: msg_id,
+            message: msg
+          });
+        }
+      })
+    })
+    .catch((error) => {
+      console.log("Unable to connect to dfuse endpoint.", error)
+  })     
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {

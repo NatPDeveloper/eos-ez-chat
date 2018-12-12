@@ -33,8 +33,23 @@ $(function() {
     var $loginPage = $('.login.page'); // The login page
     var $chatPage = $('.chat.page'); // The chatroom page
 
+    let signoutButton = document.querySelector('#signoutButton');
+    signoutButton.onclick = () => {
+      scatter.forgetIdentity();
+      signoutButton.setAttribute('style','visibility:hidden');
+      window.location.reload();
+    }
+
     // Prompt for setting a username
     var username;
+    let chat_id;
+
+    const generateChatId = () => {
+      var S4 = function() {
+        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+      };
+      return ("id"+S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    }
 
     var connected = false;
     var typing = false;
@@ -57,7 +72,7 @@ $(function() {
 
       const requiredFields = { accounts:[network] };
       if(!scatter.identity){
-        document.querySelector('button').addEventListener('click', function() { 
+        document.querySelector('#scatterLogin').addEventListener('click', function() { 
           scatter.getIdentity(requiredFields).then(() => {
             const account = scatter.identity.accounts.find(x => x.blockchain === 'eos');
             username = account.name;
@@ -66,19 +81,20 @@ $(function() {
             $chatPage.show();
             $loginPage.off('click');
             $currentInput = $inputMessage.focus();
+            signoutButton.setAttribute('style','visibility:visible');
             }).catch(error => {
                 console.error(error);
             });
         });
       } else {       
         const account = scatter.identity.accounts.find(x => x.blockchain === 'eos');
-        // username = cleanInput($usernameInput.val().trim());
         $loginPage.fadeOut();
         $chatPage.show();
         $loginPage.off('click');
         $currentInput = $inputMessage.focus();
         username = account.name;
         socket.emit('add user', account.name);
+        signoutButton.setAttribute('style','visibility:visible');
       }
     }
 
@@ -95,19 +111,20 @@ $(function() {
 
       // Prevent markup from being injected into the message
       message = cleanInput(message);
+      chat_id = generateChatId();
       // if there is a non-empty message and a socket connection
       if (message && connected) {
         $inputMessage.val('');
         addChatMessage({
           username: username,
-          status: status,
+          chat_id: chat_id,
           message: message
         });
         // tell server to execute 'new message' and send along one parameter
         socket.emit('new message', message);
       }
       eos.contract('eosezchatnat').then(contract => {  // contract account needs to change when going to jungle..
-        contract.sendmsg(account.name, message, transactionOptions)
+        contract.sendmsg(account.name, chat_id, message, transactionOptions)
       }).catch(e => {
           console.log("error", e);
       })
@@ -135,8 +152,9 @@ $(function() {
         
       var $statusDiv = $('<span class="username"/>')
         .text("pending ")
-        .css('color', getUsernameColor(data.username));
-      
+        .css('color', 'red');
+      $statusDiv.attr("id",data.chat_id);
+
       var $messageBodyDiv = $('<span class="messageBody">')
         .text(data.message);
 
@@ -327,6 +345,23 @@ $(function() {
 
     socket.on('reconnect_error', () => {
       log('attempt to reconnect has failed');
+    });
+
+    socket.on('transaction_status', (data) => {
+      console.log(data.execution_irreversible);
+      console.log(data);
+      if(data.execution_irreversible){
+        document.querySelector('#' + data.msg_id).textContent = "irreversible";
+        document.querySelector('#' + data.msg_id).style.color = "green";
+      }
+    });
+
+    socket.on('new transaction', (data) => {
+      console.log(data.username);
+      console.log(data.msg_id);
+      console.log(data.message);
+      document.querySelector('#' + data.msg_id).textContent = "confirmed";
+      document.querySelector('#' + data.msg_id).style.color = "#e5d822";
     });
 
     window.ScatterJS = null;
