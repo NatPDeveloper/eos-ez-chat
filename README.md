@@ -9,14 +9,14 @@ Link: https://eos-ez-chat.herokuapp.com/
 Using the [Scatter Wallet](https://get-scatter.com/) and a [Jungle 2.0 account](https://monitor.jungletestnet.io/#account), you can login and send messages in a live chatroom.
   Watch as your message goes from pending to confirmed to irrversible.
 
-### Technologies ###:
+### Technologies: ###
 
 1. Socket IO's [chat example](https://github.com/socketio/socket.io/tree/master/examples/chat)
-2. EOSIO Smart Contract on Jungle
+2. EOSIO Smart Contract on the [Jungle Testnet 2.0](https://monitor.jungletestnet.io/#home)
 3. [Dfuse's Websocket](https://www.dfuse.io/en) for tracking transaction status and getting data
 4. NodeJS
 
-### Steps to host locally (requires Node): ###
+### Steps to host locally (requires Node and [EOS](https://developers.eos.io/eosio-cpp/v1.0.0/docs)): ###
 
 1. Get a free dfuse API key: https://www.dfuse.io/en
 2. `git clone --recursive https://github.com/NatPDeveloper/eos-ez-chat`
