@@ -1,4 +1,4 @@
-### EOS EZ Chat ###
+![](https://github.com/NatPDeveloper/eos-ez-chat/blob/master/public/EOS-EZ-Chat.png?raw=true)
 
 An eosio authenticated chat room.
 
